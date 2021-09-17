@@ -11,19 +11,19 @@ import { ColorTheme } from '../color';
 import { ParamDefinition as PD } from '../../mol-util/param-definition';
 import { ThemeDataContext } from '../theme';
 
-const DefaultOccupancyColor = Color(0xCCCCCC);
-const Description = `Assigns a color based on the occupancy of an atom.`;
+const DefaultPredictionColor = Color(0xCCCCCC);
+const Description = `Assigns a color based on the predicted interface of an atom.`;
 
-export const OccupancyColorThemeParams = {
-    domain: PD.Interval([0, 1]),
-    list: PD.ColorList('purples', { presetKind: 'scale' }),
+export const PredictionColorThemeParams = {
+    domain: PD.Interval([0.0, 1.0]),
+    list: PD.ColorList('blue-white-red', { presetKind: 'scale' }),
 };
-export type OccupancyColorThemeParams = typeof OccupancyColorThemeParams
-export function getOccupancyColorThemeParams(ctx: ThemeDataContext) {
-    return OccupancyColorThemeParams; // TODO return copy
+export type PredictionColorThemeParams = typeof PredictionColorThemeParams
+export function getPredictionColorThemeParams(ctx: ThemeDataContext) {
+    return PredictionColorThemeParams; // TODO return copy
 }
 
-export function getOccupancy(unit: Unit, element: ElementIndex): number {
+export function getPrediction(unit: Unit, element: ElementIndex): number {
     if (Unit.isAtomic(unit)) {
         return unit.model.atomicConformation.occupancy.value(element);
     } else {
@@ -31,7 +31,7 @@ export function getOccupancy(unit: Unit, element: ElementIndex): number {
     }
 }
 
-export function OccupancyColorTheme(ctx: ThemeDataContext, props: PD.Values<OccupancyColorThemeParams>): ColorTheme<OccupancyColorThemeParams> {
+export function PredictionColorTheme(ctx: ThemeDataContext, props: PD.Values<PredictionColorThemeParams>): ColorTheme<PredictionColorThemeParams> {
     const scale = ColorScale.create({
         reverse: false,
         domain: props.domain,
@@ -40,15 +40,15 @@ export function OccupancyColorTheme(ctx: ThemeDataContext, props: PD.Values<Occu
 
     function color(location: Location): Color {
         if (StructureElement.Location.is(location)) {
-            return scale.color(getOccupancy(location.unit, location.element));
+            return scale.color(getPrediction(location.unit, location.element));
         } else if (Bond.isLocation(location)) {
-            return scale.color(getOccupancy(location.aUnit, location.aUnit.elements[location.aIndex]));
+            return scale.color(getPrediction(location.aUnit, location.aUnit.elements[location.aIndex]));
         }
-        return DefaultOccupancyColor;
+        return DefaultPredictionColor;
     }
 
     return {
-        factory: OccupancyColorTheme,
+        factory: PredictionColorTheme,
         granularity: 'group',
         color,
         props,
@@ -57,12 +57,12 @@ export function OccupancyColorTheme(ctx: ThemeDataContext, props: PD.Values<Occu
     };
 }
 
-export const OccupancyColorThemeProvider: ColorTheme.Provider<OccupancyColorThemeParams, 'occupancy'> = {
-    name: 'occupancy',
-    label: 'Occupancy',
+export const PredictionColorThemeProvider: ColorTheme.Provider<PredictionColorThemeParams, 'prediction'> = {
+    name: 'prediction',
+    label: 'Prediction',
     category: ColorTheme.Category.Atom,
-    factory: OccupancyColorTheme,
-    getParams: getOccupancyColorThemeParams,
-    defaultValues: PD.getDefaultValues(OccupancyColorThemeParams),
+    factory: PredictionColorTheme,
+    getParams: getPredictionColorThemeParams,
+    defaultValues: PD.getDefaultValues(PredictionColorThemeParams),
     isApplicable: (ctx: ThemeDataContext) => !!ctx.structure && ctx.structure.models.some(m => m.atomicConformation.occupancy.isDefined)
 };

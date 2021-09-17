@@ -214,6 +214,10 @@ export const ColorLists = {
         '',
         [ 0xBF2222, 0xFFFFFF, 0x3361E1 ]
     ),
+    'blue-white-red': ColorList('Blue-White-Red', 'diverging',
+        '',
+        [ 0x3361E1, 0xFFFFFF, 0xBF2222 ]
+    ),
 };
 
 export type ColorListName = keyof typeof ColorLists

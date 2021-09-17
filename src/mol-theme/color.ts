@@ -33,6 +33,7 @@ import { OccupancyColorThemeProvider } from './color/occupancy';
 import { OperatorNameColorThemeProvider } from './color/operator-name';
 import { OperatorHklColorThemeProvider } from './color/operator-hkl';
 import { PartialChargeColorThemeProvider } from './color/partial-charge';
+import { PredictionColorThemeProvider } from './color/prediction';
 
 export type LocationColor = (location: Location, isSecondary: boolean) => Color
 
@@ -102,6 +103,7 @@ namespace ColorTheme {
         'uncertainty': UncertaintyColorThemeProvider,
         'unit-index': UnitIndexColorThemeProvider,
         'uniform': UniformColorThemeProvider,
+        'prediction': PredictionColorThemeProvider,
     };
     type _BuiltIn = typeof BuiltIn
     export type BuiltIn = keyof _BuiltIn
